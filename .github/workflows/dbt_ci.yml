@@ -1,0 +1,39 @@
+
+name: dbt CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  dbt-ci:
+    name: Build and test dbt models
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Validate and test dbt models
+        working-directory: ./legacy_marketing
+        env:
+          DBT_TARGET: ci
+          DBT_PROFILES_DIR: ../.github
+          DBX_ID_APPLICATION_ID: ${{ secrets.DBX_ID_APPLICATION_ID }}
+          DBX_SECRET: ${{ secrets.DBX_SECRET }}
+        run: |
+          uv run dbt deps --target ci
+          uv run dbt debug --target ci
+          uv run dbt build --target ci

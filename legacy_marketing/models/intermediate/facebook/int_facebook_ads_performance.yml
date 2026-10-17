@@ -1,0 +1,134 @@
+
+version: 2
+
+models:
+  - name: int_facebook_ads_performance
+    description: >
+      Intermediate Facebook advertising performance table.
+      Combines daily advertising statistics with advertisement,
+      ad group, campaign, and advertising account metadata.
+
+      The reporting grain is one record per advertisement
+      per reporting date (ad_id + ad_date).
+
+      The model preserves all records from the Facebook
+      statistics staging table through LEFT JOIN operations.
+      Missing impressions and clicks remain SQL NULL
+      rather than being replaced with zero.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - ad_id
+              - ad_date
+
+    columns:
+
+      - name: platform
+        description: >
+          Advertising platform from which the performance
+          data originates. Always set to 'facebook'.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['facebook']
+
+      - name: ad_id
+        description: >
+          Unique identifier of the Facebook advertisement.
+          Together with ad_date, defines the reporting grain.
+        data_tests:
+          - not_null
+
+      - name: ad_name
+        description: >
+          Descriptive name assigned to the Facebook advertisement.
+
+      - name: ad_status
+        description: >
+          Status of the advertisement as recorded in the
+          Facebook advertisement metadata.
+
+      - name: account_id
+        description: >
+          Unique identifier of the Facebook advertising account
+          associated with the advertisement.
+        data_tests:
+          - not_null
+
+      - name: account_name
+        description: >
+          Descriptive name of the Facebook advertising account.
+
+      - name: campaign_id
+        description: >
+          Unique identifier of the Facebook advertising campaign
+          associated with the advertisement.
+        data_tests:
+          - not_null
+
+      - name: campaign_name
+        description: >
+          Descriptive name of the Facebook advertising campaign.
+
+      - name: ad_group_id
+        description: >
+          Unique identifier of the Facebook ad group
+          containing the advertisement.
+        data_tests:
+          - not_null
+
+      - name: ad_group_name
+        description: >
+          Descriptive name of the Facebook ad group.
+
+      - name: currency_code
+        description: >
+          Currency code associated with the advertising account.
+          Used to identify the currency in which advertising
+          expenditure is reported.
+        data_tests:
+          - not_null
+
+      - name: ad_date
+        description: >
+          Calendar date on which the advertisement performance
+          metrics were recorded.
+          Together with ad_id, defines the reporting grain.
+        data_tests:
+          - not_null
+
+      - name: spend
+        description: >
+          Amount spent on the advertisement during the
+          reporting date, expressed in the account currency.
+          Stored as DECIMAL(18,4).
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: impressions
+        description: >
+          Number of times the advertisement was displayed
+          during the reporting date.
+          NULL indicates missing source data rather than
+          zero impressions.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: clicks
+        description: >
+          Number of recorded advertisement clicks during
+          the reporting date.
+          NULL indicates missing source data rather than
+          zero clicks.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"

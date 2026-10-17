@@ -1,0 +1,24 @@
+
+version: 2
+
+models:
+  - name: stg_snapchat_campaigns
+    description: >
+      Staging model for Snapchat advertising campaigns.
+      Contains unique campaign identifiers, account
+      identifiers, and campaign names.
+
+    columns:
+      - name: campaign_id
+        description: Unique Snapchat campaign identifier.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: account_id
+        description: Snapchat advertising account identifier.
+        data_tests:
+          - not_null
+
+      - name: campaign_name
+        description: Name of the Snapchat advertising campaign.

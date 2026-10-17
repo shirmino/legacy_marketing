@@ -1,0 +1,43 @@
+
+version: 2
+
+sources:
+  - name: snapchat
+    description: Raw Snapchat advertising data.
+    database: bronze_production
+    schema: legacy_raw
+    config:
+      enabled: true 
+      meta: 
+        owner: "@legacy_engineer"
+      freshness:
+        warn_after:  
+          count: 2
+          period: day
+
+    tables:
+      - name: snapchat_ads_stats
+        description: ads_stats data from snapchat plaform (static)
+        config:
+          enabled: true
+          event_time: ad_date
+
+      - name: snapchat_ads_ad_history_new_ad_names
+        description: ads_ad_history_new_ad_names data from snapchat plaform (static)
+        config:
+          enabled: true
+          event_time: ad_detail_updated_at
+
+
+      - name: snapchat_ads_adgroup_history_new_ad_group_names
+        description: ads_adgroup_history_new_ad_group_names data from snapchat plaform (static)
+        config:
+          enabled: true
+          event_time: ad_group_updated_at
+
+
+      - name: snapchat_ads_campaign_history_new_campaign_names
+        description: ads_campaign_history_new_campaign_names data from snapchat plaform (static)
+        config:
+          enabled: true
+          event_time:

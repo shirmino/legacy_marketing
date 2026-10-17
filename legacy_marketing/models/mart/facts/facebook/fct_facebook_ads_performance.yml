@@ -1,0 +1,122 @@
+
+version: 2
+
+models:
+  - name: fct_facebook_ads_performance
+    description: >
+      Daily Facebook advertising performance fact table.
+
+      Contains advertising performance metrics including
+      spend, impressions, and clicks.
+
+      The table is built from int_facebook_ads_performance
+      and contains one record per advertisement per day,
+      identified by the combination of ad_id and ad_date.
+
+      The account_id, campaign_id, ad_group_id, and ad_id
+      columns connect this fact table to the corresponding
+      Facebook dimension tables.
+
+      Missing impressions and clicks are preserved as
+      SQL NULL values rather than converted to zero.
+    #config:
+     #contract:
+       #enforced: true
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - ad_id
+              - ad_date
+
+    columns:
+
+      - name: ad_id
+        description: >
+          Unique identifier of the Facebook advertisement.
+          Foreign key to dim_facebook_ads.ad_id.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_facebook_ads')
+                field: ad_id
+
+      - name: account_id
+        description: >
+          Identifier of the Facebook advertising account
+          associated with the advertisement.
+          Foreign key to dim_facebook_accounts.account_id.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_facebook_accounts')
+                field: account_id
+
+      - name: campaign_id
+        description: >
+          Identifier of the Facebook advertising campaign
+          associated with the advertisement.
+          Foreign key to dim_facebook_campaigns.campaign_id.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_facebook_campaigns')
+                field: campaign_id
+
+      - name: ad_group_id
+        description: >
+          Identifier of the Facebook advertising ad group
+          associated with the advertisement.
+          Foreign key to dim_facebook_adgroups.ad_group_id.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_facebook_adgroups')
+                field: ad_group_id
+
+      - name: ad_date
+        description: >
+          Calendar date on which the advertising
+          performance metrics were recorded.
+          Forms part of the composite grain with ad_id.
+        data_tests:
+          - not_null
+
+      - name: currency_code
+        description: >
+          Currency code associated with the Facebook
+          advertising account and its spending metrics.
+          Spend values should be interpreted in this
+          currency and not aggregated across different
+          currencies without conversion.
+        data_tests:
+          - not_null
+
+      - name: spend
+        description: >
+          Advertising expenditure recorded for the
+          advertisement on the specified date.
+          Expressed in the associated currency_code.
+        data_tests:
+          - not_null
+
+      - name: impressions
+        description: >
+          Number of times the advertisement was displayed
+          on the specified date.
+
+          Missing values remain SQL NULL to distinguish
+          unavailable measurements from zero impressions.
+
+      - name: clicks
+        description: >
+          Number of clicks recorded for the advertisement
+          on the specified date.
+
+          Missing values remain SQL NULL to distinguish
+          unavailable measurements from zero clicks.

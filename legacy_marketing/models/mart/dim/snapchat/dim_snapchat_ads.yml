@@ -1,0 +1,70 @@
+
+version: 2
+
+models:
+  - name: dim_snapchat_ads
+    description: >
+      Snapchat advertisement dimension table.
+
+      Contains descriptive information about Snapchat
+      advertisements, including their unique identifiers,
+      advertisement names, associated ad group identifiers,
+      and metadata update timestamps.
+
+      The table is built from stg_snapchat_ads and
+      contains one record per unique ad_id.
+
+      Some advertisements reference ad groups that are
+      not present in the available ad group metadata.
+      These advertisements are preserved to avoid
+      losing valid source records.
+
+      This dimension supports advertisement-level
+      reporting and Snapchat advertising performance
+      analysis.
+    #config:
+     #contract:
+       #enforced: true
+
+    columns:
+
+      - name: ad_id
+        description: >
+          Unique identifier of the Snapchat advertisement.
+          Serves as the primary key of this dimension
+          and links advertisement metadata to
+          advertising performance records.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: ad_name
+        description: >
+          Descriptive name assigned to the Snapchat
+          advertisement in the source system.
+          Used to identify advertisements in reporting
+          and analytical dashboards.
+        data_tests:
+          - not_null
+
+      - name: ad_group_id
+        description: >
+          Identifier of the Snapchat advertising ad group
+          associated with the advertisement.
+
+          Some ad_group_id values do not have matching
+          records in dim_snapchat_adgroups because
+          the available source metadata is incomplete.
+
+          These identifiers are retained rather than
+          removed or replaced.
+        data_tests:
+          - not_null
+
+      - name: ad_updated_at
+        description: >
+          Timestamp indicating when the Snapchat
+          advertisement metadata was last updated
+          in the source system.
+        data_tests:
+          - not_null

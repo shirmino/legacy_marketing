@@ -1,0 +1,50 @@
+version: 2
+
+sources:
+  - name: facebook
+    description: Raw Facebook advertising data.
+
+    database: bronze_production
+    schema: legacy_raw
+    config:
+      enabled: true 
+      meta: 
+        owner: "@legacy_engineer"
+      freshness:
+        warn_after:  
+          count: 2
+          period: day
+
+
+    tables:
+      - name: facebook_ads_stats
+        description: ads_stats data from  facebook plaform (static)
+        config:
+          enabled: true
+          event_time: ad_date
+
+      - name: facebook_new_acccount_de_randomized
+        description: new_acccount_de_randomized data from facebook plaform (static)
+        config:
+          enabled: true
+          event_time: account_updated_at
+
+      - name: facebook_new_adgroup_de_randomized
+        description: new_adgroup_de_randomized data from facebook plaform (static)
+        config:
+          enabled: true
+          event_time: adgroup_updated_at
+
+      - name: facebook_new_ads_de_randomized
+        description: new_ads_de_randomized data from facebook plaform (static)
+        config:
+          enabled: true
+          event_time: adgroup_updated_at
+
+      - name: facebook_new_campaign_de_randomized
+        description: new_campaign_de_randomized data from facebook plaform (static)
+        config:
+          enabled: true
+          event_time: campaign_updated_at
+
+

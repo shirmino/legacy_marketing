@@ -1,0 +1,71 @@
+
+version: 2
+
+models:
+  - name: stg_snapchat_ads_stats
+    description: >
+      Snapchat advertising performance statistics.
+      The observed grain is ad_id, ad_date, country,
+      currency_code, and data_src.
+      Raw click values containing the literal string
+      'null' are converted to SQL NULL.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - ad_id
+              - ad_date
+              - country
+              - currency_code
+              - data_src
+
+    columns:
+      - name: ad_id
+        description: Snapchat advertisement identifier.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_snapchat_ads')
+                field: ad_id
+
+      - name: ad_date
+        description: Reporting date.
+        data_tests:
+          - not_null
+
+      - name: currency_code
+        description: Currency associated with advertising spend.
+
+      - name: country
+        description: Country associated with the statistics.
+
+      - name: data_src
+        description: Source identifier.
+
+      - name: spend
+        description: Advertising spend as DECIMAL(18,4).
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: impressions
+        description: Number of advertising impressions.
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: clicks
+        description: >
+          Number of advertising clicks.
+          NULL indicates a missing source value,
+          not zero clicks.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"

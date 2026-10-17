@@ -1,0 +1,62 @@
+
+version: 2
+
+models:
+  - name: dim_facebook_accounts
+    description: >
+      Facebook advertising account dimension table.
+
+      Contains descriptive information about each Facebook
+      advertising account, including the account name,
+      reporting currency, and creation/update timestamps.
+
+      The table is built from stg_facebook_accounts and
+      contains one record per unique account_id.
+
+      This dimension supports reporting and analysis of
+      advertising performance by account and currency.
+    #config:
+     #contract:
+       #enforced: true
+
+    columns:
+
+      - name: account_id
+        description: >
+          Unique identifier of the Facebook advertising
+          account. Serves as the primary key of this dimension
+          and can be used to join advertising fact tables
+          to account information.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: account_name
+        description: >
+          Descriptive name assigned to the Facebook
+          advertising account.
+        data_tests:
+          - not_null
+
+      - name: currency_code
+        description: >
+          Currency code associated with the Facebook
+          advertising account. Identifies the currency
+          in which advertising expenditure is reported.
+        data_tests:
+          - not_null
+
+      - name: account_created_at
+        description: >
+          Timestamp indicating when the Facebook advertising
+          account was originally created in the source system.
+        data_tests:
+          - not_null
+
+      - name: account_updated_at
+        description: >
+          Timestamp indicating when the Facebook advertising
+          account information was last updated in the
+          source system.
+        data_tests:
+          - not_null
