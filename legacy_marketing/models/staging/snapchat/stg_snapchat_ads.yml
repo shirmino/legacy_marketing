@@ -1,0 +1,34 @@
+
+version: 2
+
+models:
+  - name: stg_snapchat_ads
+    description: >
+      Staging model for Snapchat advertisement records.
+      Preserves advertisement identifiers, ad group
+      relationships, names, and update timestamps.
+
+    columns:
+      - name: ad_id
+        description: Unique Snapchat advertisement identifier.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: ad_group_id
+        description: Snapchat ad group identifier.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_snapchat_adgroups')
+                field: ad_group_id
+              config:
+                severity: warn
+
+
+      - name: ad_name
+        description: Snapchat advertisement name.
+
+      - name: ad_updated_at
+        description: Last recorded advertisement update timestamp.

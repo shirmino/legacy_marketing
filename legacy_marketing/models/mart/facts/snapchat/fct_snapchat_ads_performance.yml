@@ -1,0 +1,129 @@
+
+version: 2
+
+models:
+  - name: fct_snapchat_ads_performance
+    description: >
+      Snapchat advertising performance fact table.
+
+      Contains daily advertising performance metrics
+      including spend, impressions, and clicks.
+
+      The table is built from int_snapchat_ads_performance.
+
+      Each record is uniquely identified by the
+      combination of ad_id, ad_date, country,
+      currency_code, and data_src.
+
+      Advertisement, ad group, and campaign identifiers
+      provide relationships to the corresponding
+      Snapchat dimension tables.
+
+      Missing click values are preserved as SQL NULL
+      rather than converted to zero.
+
+      The available source data covers January through
+      December 2024.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - ad_id
+              - ad_date
+              - country
+              - currency_code
+              - data_src
+
+    columns:
+
+      - name: ad_id
+        description: >
+          Unique identifier of the Snapchat advertisement.
+          Foreign key to dim_snapchat_ads.ad_id.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_snapchat_ads')
+                field: ad_id
+
+      - name: ad_group_id
+        description: >
+          Identifier of the Snapchat advertising ad group
+          associated with the advertisement.
+
+          Some advertisements in the source metadata
+          reference ad groups that are unavailable in
+          dim_snapchat_adgroups. These identifiers are
+          retained to preserve source information.
+        data_tests:
+          - not_null
+
+      - name: campaign_id
+        description: >
+          Identifier of the Snapchat advertising campaign
+          associated with the advertisement.
+          Foreign key to dim_snapchat_campaigns.campaign_id.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_snapchat_campaigns')
+                field: campaign_id
+
+      - name: ad_date
+        description: >
+          Calendar date on which the Snapchat advertising
+          performance metrics were recorded.
+          Forms part of the composite grain.
+        data_tests:
+          - not_null
+
+      - name: country
+        description: >
+          Country associated with the advertising
+          performance record. Forms part of the
+          composite grain.
+        data_tests:
+          - not_null
+
+      - name: currency_code
+        description: >
+          Currency code associated with the advertising
+          spend amount. Forms part of the composite grain.
+
+          Spend should not be aggregated across different
+          currencies without appropriate conversion.
+        data_tests:
+          - not_null
+
+      - name: data_src
+        description: >
+          Source system or data source identifier
+          associated with the advertising performance
+          record. Forms part of the composite grain.
+        data_tests:
+          - not_null
+
+      - name: spend
+        description: >
+          Advertising expenditure recorded for the
+          specified advertisement, date, country,
+          currency, and data source.
+        data_tests:
+          - not_null
+
+      - name: impressions
+        description: >
+          Number of times the Snapchat advertisement
+          was displayed for the specified performance
+          record.
+
+      - name: clicks
+        description: >
+          Number of clicks recorded for the Snapchat
+          advertisement.
+
+          Missing source values remain SQL NULL rather
+          than being replaced with zero.

@@ -1,0 +1,67 @@
+
+version: 2
+
+models:
+  - name: stg_facebook_ads_stats
+    description: >
+      Daily Facebook advertising performance statistics.
+      Each row represents one advertisement on one date.
+      Literal 'null' strings in source metrics are
+      converted to SQL NULL and preserved as missing data.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - ad_id
+              - ad_date
+
+    columns:
+      - name: ad_id
+        description: Facebook advertisement identifier.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_facebook_ads')
+                field: ad_id
+
+      - name: account_id
+        description: Facebook advertising account identifier.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_facebook_accounts')
+                field: account_id
+
+      - name: ad_date
+        description: Date of advertising performance.
+        data_tests:
+          - not_null
+
+      - name: spend
+        description: Advertising spend as DECIMAL(18,4).
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: impressions
+        description: >
+          Advertising impressions. NULL indicates
+          missing source data, not zero impressions.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: clicks
+        description: >
+          Advertising clicks. NULL indicates
+          missing source data, not zero clicks.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"

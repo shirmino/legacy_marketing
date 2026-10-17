@@ -1,0 +1,16 @@
+legacy_marketing:
+  target: ci
+
+  outputs:
+    ci:
+      type: databricks
+      catalog: bronze_staging
+      schema: legacy_ci
+
+      host: dbc-33970aed-c041.cloud.databricks.com
+      http_path: /sql/1.0/warehouses/61baf66da5f526e4
+
+      auth_type: oauth
+      client_id: "{{ env_var('DBX_ID_APPLICATION_ID') }}"
+      client_secret: "{{ env_var('DBX_SECRET') }}"
+      threads: 4

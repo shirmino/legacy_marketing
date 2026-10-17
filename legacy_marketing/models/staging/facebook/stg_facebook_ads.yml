@@ -1,0 +1,58 @@
+
+version: 2
+
+models:
+  - name: stg_facebook_ads
+    description: >
+      Staging model containing Facebook advertisement
+      metadata. Each row represents one unique ad,
+      linked to an account, campaign, and ad group.
+
+    columns:
+      - name: ad_id
+        description: Unique Facebook advertisement identifier.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: account_id
+        description: Facebook account identifier.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_facebook_accounts')
+                field: account_id
+
+      - name: campaign_id
+        description: Facebook campaign identifier.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_facebook_campaigns')
+                field: campaign_id
+
+      - name: ad_group_id
+        description: Facebook ad group identifier.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_facebook_adgroups')
+                field: ad_group_id
+
+      - name: ad_name
+        description: Facebook advertisement name.
+        data_tests:
+          - not_null
+
+      - name: ad_status
+        description: Current advertisement status.
+        data_tests:
+          - not_null
+
+      - name: ad_updated_at
+        description: Advertisement update timestamp.
+        data_tests:
+          - not_null

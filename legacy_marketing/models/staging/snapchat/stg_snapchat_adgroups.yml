@@ -1,0 +1,25 @@
+
+version: 2
+
+models:
+  - name: stg_snapchat_adgroups
+    description: >
+      Current-state Snapchat ad groups.
+      Retains the most recently updated record
+      for each ad_group_id from the raw history table.
+
+    columns:
+      - name: ad_group_id
+        description: Unique Snapchat ad group identifier.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: campaign_id
+        description: Campaign associated with the ad group.
+
+      - name: ad_group_name
+        description: Latest available ad group name.
+
+      - name: ad_group_updated_at
+        description: Timestamp of the selected ad group record.

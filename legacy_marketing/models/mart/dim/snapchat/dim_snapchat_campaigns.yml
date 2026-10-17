@@ -1,0 +1,50 @@
+
+version: 2
+
+models:
+  - name: dim_snapchat_campaigns
+    description: >
+      Snapchat advertising campaign dimension table.
+
+      Contains descriptive information about Snapchat
+      advertising campaigns, including their unique
+      identifiers, campaign names, and associated
+      advertising account identifiers.
+
+      The table is built from stg_snapchat_campaigns
+      and contains one record per unique campaign_id.
+
+      This dimension supports campaign-level reporting
+      and analysis of Snapchat advertising performance.
+    #config:
+     #contract:
+       #enforced: true
+
+    columns:
+
+      - name: campaign_id
+        description: >
+          Unique identifier of the Snapchat advertising
+          campaign. Serves as the primary key of this
+          dimension and is used to associate campaign
+          information with advertising performance data.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: campaign_name
+        description: >
+          Descriptive name assigned to the Snapchat
+          advertising campaign in the source system.
+          Used to identify campaigns in reporting
+          and analytical dashboards.
+        data_tests:
+          - not_null
+
+      - name: account_id
+        description: >
+          Identifier of the Snapchat advertising account
+          associated with the campaign. Provides account
+          context for campaign-level reporting.
+        data_tests:
+          - not_null

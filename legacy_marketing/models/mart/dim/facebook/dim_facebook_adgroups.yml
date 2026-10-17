@@ -1,0 +1,49 @@
+
+version: 2
+
+models:
+  - name: dim_facebook_adgroups
+    description: >
+      Facebook advertising ad group dimension table.
+
+      Contains descriptive information about Facebook
+      advertising ad groups, including their unique
+      identifiers, names, and update timestamps.
+
+      The table is built from stg_facebook_adgroups
+      and contains one record per unique ad_group_id.
+
+      This dimension supports ad group-level reporting
+      and analysis of Facebook advertising performance.
+    #config:
+     #contract:
+       #enforced: true
+
+    columns:
+
+      - name: ad_group_id
+        description: >
+          Unique identifier of the Facebook advertising
+          ad group. Serves as the primary key of this
+          dimension and is used to associate ad group
+          information with advertising performance data.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: ad_group_name
+        description: >
+          Descriptive name assigned to the Facebook
+          advertising ad group in the source system.
+          Used to identify ad groups in reporting
+          and analytical dashboards.
+        data_tests:
+          - not_null
+
+      - name: ad_group_updated_at
+        description: >
+          Timestamp indicating when the Facebook
+          advertising ad group information was last
+          updated in the source system.
+        data_tests:
+          - not_null

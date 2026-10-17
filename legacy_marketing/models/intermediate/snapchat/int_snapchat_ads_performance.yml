@@ -1,0 +1,124 @@
+
+version: 2
+
+models:
+  - name: int_snapchat_ads_performance
+    description: >
+      Intermediate Snapchat advertising performance table.
+      Combines daily advertising statistics with advertisement,
+      ad group, and campaign metadata.
+
+      The reporting grain is one record per combination of
+      ad_id, ad_date, country, currency_code, and data_src.
+
+      All performance records are preserved through LEFT JOINs.
+      Missing clicks remain SQL NULL rather than being
+      converted to zero.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - ad_id
+              - ad_date
+              - country
+              - currency_code
+              - data_src
+
+    columns:
+
+      - name: platform
+        description: >
+          Advertising platform that generated the data.
+          Always set to 'snapchat'.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['snapchat']
+
+      - name: ad_id
+        description: >
+          Unique identifier of the Snapchat advertisement.
+          Forms part of the reporting grain.
+        data_tests:
+          - not_null
+
+      - name: ad_name
+        description: >
+          Descriptive name of the Snapchat advertisement.
+
+      - name: ad_group_id
+        description: >
+          Unique identifier of the Snapchat ad group
+          containing the advertisement.
+        data_tests:
+          - not_null
+
+      - name: ad_group_name
+        description: >
+          Descriptive name of the Snapchat ad group.
+
+      - name: campaign_id
+        description: >
+          Unique identifier of the Snapchat advertising campaign.
+        data_tests:
+          - not_null
+
+      - name: campaign_name
+        description: >
+          Descriptive name of the Snapchat advertising campaign.
+
+      - name: currency_code
+        description: >
+          Currency in which the Snapchat advertising
+          expenditure is reported.
+        data_tests:
+          - not_null
+
+      - name: country
+        description: >
+          Country associated with the Snapchat
+          advertising performance record.
+
+      - name: data_src
+        description: >
+          Source-system identifier supplied with the
+          Snapchat performance statistics.
+
+      - name: ad_date
+        description: >
+          Calendar date on which the Snapchat advertisement
+          performance metrics were recorded.
+        data_tests:
+          - not_null
+
+      - name: spend
+        description: >
+          Amount spent on the advertisement during the
+          reporting date, expressed in currency_code.
+          Stored as DECIMAL(18,4).
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: impressions
+        description: >
+          Number of times the Snapchat advertisement was displayed.
+          NULL represents missing source data, not zero impressions.
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+      - name: clicks
+        description: >
+          Number of recorded clicks on the Snapchat advertisement.
+          NULL represents missing source data, not zero clicks.
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"

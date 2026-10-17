@@ -1,0 +1,46 @@
+
+version: 2
+
+models:
+  - name: dim_snapchat_adgroups
+    description: >
+      Snapchat advertising ad group dimension table.
+
+      Contains descriptive information about Snapchat
+      advertising ad groups, including their unique
+      identifiers and names.
+
+      The table is built from stg_snapchat_adgroups
+      and contains one record per unique ad_group_id.
+
+      Duplicate records from the original source have
+      already been resolved in the staging layer.
+
+      This dimension supports ad group-level reporting
+      and analysis of Snapchat advertising performance.
+    #config:
+     #contract:
+      #enforced: true
+
+    
+
+    columns:
+
+      - name: ad_group_id
+        description: >
+          Unique identifier of the Snapchat advertising
+          ad group. Serves as the primary key of this
+          dimension and is used to associate ad group
+          information with advertising performance data.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: ad_group_name
+        description: >
+          Descriptive name assigned to the Snapchat
+          advertising ad group in the source system.
+          Used to identify ad groups in reporting
+          and analytical dashboards.
+        data_tests:
+          - not_null
